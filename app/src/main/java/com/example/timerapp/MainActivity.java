@@ -34,28 +34,7 @@ public class MainActivity extends AppCompatActivity {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-
-                int minutes =i/60;
-                int seconds = i-(minutes * 60);
-
-                String minutesString ="";
-                String secondsString="";
-
-                if(minutes<10){
-                    minutesString = "0"+ minutes;
-                }else{
-                    minutesString = String.valueOf(minutes);
-                }
-
-                if(seconds<10){
-                    secondsString = "0"+ seconds;
-                }else{
-                    secondsString = String.valueOf(seconds);
-                }
-
-                String resultTime = minutesString+":"+secondsString;
-
-                textView.setText(resultTime);
+                setTimerSeekBar(i);
             }
 
             @Override
@@ -71,6 +50,34 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void setTimerSeekBar(int progress){
+        int minutes =progress/60;
+        int seconds = progress-(minutes * 60);
+
+        String minutesString ="";
+        String secondsString="";
+
+        if(minutes<10){
+            minutesString = "0"+ minutes;
+        }else{
+            minutesString = String.valueOf(minutes);
+        }
+
+        if(seconds<10){
+            secondsString = "0"+ seconds;
+        }else{
+            secondsString = String.valueOf(seconds);
+        }
+
+        String resultTime = minutesString+":"+secondsString;
+
+        textView.setText(resultTime);
+    }
+
+    private void roadSeekBar(){
+        seekBar.setProgress(getCurrentTime()-1);
+    }
+
 
     public void startTimer(View view) {
         // получаем текущее время
@@ -80,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
             public void onTick(long l) {
                 String currentTime = determinantOfTime(getCurrentTime()-1);
                 textView.setText(currentTime);
+                roadSeekBar();// сдвигаем seekBar назад по истечении метода
             }
 
             @Override
@@ -91,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         myTimer.start();
     }
 
-     Integer getCurrentTime(){
+     private Integer getCurrentTime(){
         Integer currentTimeSecond =
                 Integer.parseInt(String.valueOf(textView.getText()).substring(3, 5));
         Integer currentTimeMinute =
@@ -100,15 +108,13 @@ public class MainActivity extends AppCompatActivity {
         return total;
     }
 
-    String determinantOfTime(int totalTime){
+    private String determinantOfTime(int totalTime){
         String settingTime = null;
         if(totalTime<=60){
             settingTime = "00:"+totalTime;
         }else{
             String minute = String.valueOf(totalTime / 60);
             String second = String.valueOf(totalTime-(Integer.parseInt(minute) * 60));
-            System.out.println("minute "+minute);
-            System.out.println("second "+second);
             if(minute.length()<1){
                 settingTime = "00:"+second;
             }else{
