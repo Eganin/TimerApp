@@ -2,22 +2,26 @@ package com.example.timerapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import static com.example.timerapp.MainActivity.endOfTime;
+
 public class MainActivity extends AppCompatActivity {
 
+    public  MediaPlayer mediaPlayer;
+    public  TextView textView;
+    public  final static String endOfTime = "00:10";
     private final static String textStartTimer = "START";
     private final static String textStopTimer = "STOP";
     private final static int interval = 1000;
     private final static int maxSecondsTimer = 3599;
     private final static int defaultProgress = 60;
-    private TextView textView;
     private SeekBar seekBar;
 
     @Override
@@ -26,10 +30,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         textView = findViewById(R.id.textView);
-        seekBar  = findViewById(R.id.seekBar);
+        seekBar = findViewById(R.id.seekBar);
 
         seekBar.setMax(maxSecondsTimer);
         seekBar.setProgress(defaultProgress);
+
+        //AssertEndTime assertEndTime = new AssertEndTime();
+
+        //Thread myThread = new Thread(assertEndTime);
+        //myThread.start();
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -50,42 +59,24 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void setTimerSeekBar(int progress){
-        int minutes =progress/60;
-        int seconds = progress-(minutes * 60);
-
-        String minutesString ="";
-        String secondsString="";
-
-        if(minutes<10){
-            minutesString = "0"+ minutes;
-        }else{
-            minutesString = String.valueOf(minutes);
-        }
-
-        if(seconds<10){
-            secondsString = "0"+ seconds;
-        }else{
-            secondsString = String.valueOf(seconds);
-        }
-
-        String resultTime = minutesString+":"+secondsString;
+    private void setTimerSeekBar(int progress) {
+        String resultTime = determinantOfTime(progress);
 
         textView.setText(resultTime);
     }
 
-    private void roadSeekBar(){
-        seekBar.setProgress(getCurrentTime()-1);
+    private void roadSeekBar() {
+        seekBar.setProgress(getCurrentTime() - 1);
     }
 
 
     public void startTimer(View view) {
         // получаем текущее время
-        Integer currentTimeStart = getCurrentTime()*1000;
+        Integer currentTimeStart = getCurrentTime() * 1000;
         CountDownTimer myTimer = new CountDownTimer(currentTimeStart, interval) {
             @Override
             public void onTick(long l) {
-                String currentTime = determinantOfTime(getCurrentTime()-1);
+                String currentTime = determinantOfTime(getCurrentTime() - 1);
                 textView.setText(currentTime);
                 roadSeekBar();// сдвигаем seekBar назад по истечении метода
             }
@@ -99,36 +90,37 @@ public class MainActivity extends AppCompatActivity {
         myTimer.start();
     }
 
-     private Integer getCurrentTime(){
+
+    private Integer getCurrentTime() {
         Integer currentTimeSecond =
                 Integer.parseInt(String.valueOf(textView.getText()).substring(3, 5));
         Integer currentTimeMinute =
-                Integer.parseInt(String.valueOf(textView.getText()).substring(0, 2))*60;
+                Integer.parseInt(String.valueOf(textView.getText()).substring(0, 2)) * 60;
         Integer total = currentTimeMinute + currentTimeSecond;
         return total;
     }
 
-    private String determinantOfTime(int totalTime){
+    private String determinantOfTime(int totalTime) {
         String settingTime = null;
-        if(totalTime<=60){
-            settingTime = "00:"+totalTime;
-        }else{
+        if (totalTime <= 60) {
+            settingTime = "00:" + totalTime;
+        } else {
             String minute = String.valueOf(totalTime / 60);
-            String second = String.valueOf(totalTime-(Integer.parseInt(minute) * 60));
-            if(minute.length()<1){
-                settingTime = "00:"+second;
-            }else{
-                if(minute.length()>1){
-                    if(Integer.parseInt(second)<10){
-                        settingTime = minute+":"+"0"+second;
-                    }else{
-                        settingTime = minute+":"+second;
+            String second = String.valueOf(totalTime - (Integer.parseInt(minute) * 60));
+            if (minute.length() < 1) {
+                settingTime = "00:" + second;
+            } else {
+                if (minute.length() > 1) {
+                    if (Integer.parseInt(second) < 10) {
+                        settingTime = minute + ":" + "0" + second;
+                    } else {
+                        settingTime = minute + ":" + second;
                     }
-                }else{
-                    if(Integer.parseInt(second)<10){
-                        settingTime = "0"+minute+":"+"0"+second;
-                    }else{
-                        settingTime = "0"+minute+":"+second;
+                } else {
+                    if (Integer.parseInt(second) < 10) {
+                        settingTime = "0" + minute + ":" + "0" + second;
+                    } else {
+                        settingTime = "0" + minute + ":" + second;
                     }
                 }
             }
@@ -136,4 +128,15 @@ public class MainActivity extends AppCompatActivity {
 
         return settingTime;
     }
+
+    public  void initMediaPlayer() {// инициализация плеера
+        mediaPlayer = MediaPlayer.create(getApplicationContext(),
+                R.raw.bell_sound);// указываем .mp3 mediaPlayer
+    }
+
+    public void play() {
+        mediaPlayer.start();// проигрываем музыку
+    }
+
+
 }
