@@ -1,8 +1,10 @@
 package com.example.timerapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -72,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
             на seek bar
              */
             seekBar.setEnabled(false);
-            isTimerOn = true;
+            isTimerOn = true;// таймер начинает работать
 
             initTimerMain();
 
@@ -97,11 +99,20 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                sound();
-                resetTimer();
+                // получаем данные из SettingsFragment
+                SharedPreferences sharedPreferences =
+                        PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+                // если пользователь в настройках включил звук
+                if (sharedPreferences.getBoolean("enable_sound", true)) {
+                    sound();
+                    resetTimer();
+                } else {
+                    resetTimer();
+                }
             }
         };
-        countDownTimer.start();
+        countDownTimer.start();// запускаем последовательные действия
     }
 
     private void resetTimer() {
@@ -114,7 +125,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateTimer() {
-        String currentTime = determinantOfTime(getCurrentTime());
+        // получаем текущее время в типе строки
+        String currentTime = determinantOfTime(getCurrentTime() - 1);
         Log.d("time", currentTime);
         textView.setText(currentTime);
         roadSeekBar();// сдвигаем seekBar назад по истечении метода
@@ -140,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
         /*
         устанавливаем на seekbar текущее время
          */
-        seekBar.setProgress(getCurrentTime() - 1);
+        seekBar.setProgress(getCurrentTime());
     }
 
 
@@ -158,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String determinantOfTime(int totalTime) {
         /*
-        Метод преобразовывает секундв в строку для вставки в TextView
+        Метод преобразовывает секунды в строку для вставки в TextView
          */
         String settingTime = null;
         if (totalTime <= 60) {

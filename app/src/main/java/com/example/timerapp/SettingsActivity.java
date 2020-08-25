@@ -12,7 +12,7 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
+        setContentView(R.layout.activity_settings);// вызываем fragment
 
         // переопределяем поведенте стрелки назад
         ActionBar actionBar = this.getSupportActionBar();
