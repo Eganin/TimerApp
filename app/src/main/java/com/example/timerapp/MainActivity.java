@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity
@@ -181,7 +182,7 @@ public class MainActivity extends AppCompatActivity
         Метод преобразовывает секунды в строку для вставки в TextView
          */
         String settingTime = null;
-        if (totalTime <= 60) {
+        if (totalTime < 60) {
             if (totalTime < 10) {
                 settingTime = "00:" + "0" + totalTime;
             } else {
@@ -276,22 +277,24 @@ public class MainActivity extends AppCompatActivity
 
     private void setIntervalFromSharedPreferences(SharedPreferences sharedPreferences) {
         String value = sharedPreferences.getString("interval", "59");
-        defaultInterval = Integer.parseInt((String)value);
+        defaultInterval = Integer.parseInt((String) value);
         String result = determinantOfTime(defaultInterval);
         textView.setText(result);
         seekBar.setProgress(defaultInterval);
+
+
     }
 
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-        if(s.equals("interval")){
+        if (s.equals("interval")) {
             setIntervalFromSharedPreferences(sharedPreferences);
         }
     }
 
     @Override
-    protected void onDestroy(){
+    protected void onDestroy() {
         super.onDestroy();
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
     }

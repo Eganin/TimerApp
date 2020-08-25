@@ -2,6 +2,7 @@ package com.example.timerapp;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.EditTextPreference;
@@ -11,7 +12,7 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceScreen;
 
 public class SettingsFragment extends PreferenceFragmentCompat
-        implements SharedPreferences.OnSharedPreferenceChangeListener {
+        implements SharedPreferences.OnSharedPreferenceChangeListener, Preference.OnPreferenceChangeListener {
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         addPreferencesFromResource(R.xml.timer_preferences);
@@ -32,6 +33,9 @@ public class SettingsFragment extends PreferenceFragmentCompat
                 setPreferenceLabel(preference, value);
             }
         }
+
+        Preference preference = findPreference("interval");
+        preference.setOnPreferenceChangeListener(this);
     }
 
     private void setPreferenceLabel(Preference preference, String value) {
@@ -41,7 +45,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
             if (index >= 0) {
                 listPreference.setSummary(listPreference.getEntries()[index]);
             }
-        }else if(preference instanceof EditTextPreference){
+        } else if (preference instanceof EditTextPreference) {
             preference.setSummary(value);
         }
     }
@@ -49,14 +53,14 @@ public class SettingsFragment extends PreferenceFragmentCompat
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
         Preference preference = findPreference(s);
-        if(!(preference instanceof  CheckBoxPreference)){
-            String value = sharedPreferences.getString(preference.getKey(),"");
-            setPreferenceLabel(preference , value);
+        if (!(preference instanceof CheckBoxPreference)) {
+            String value = sharedPreferences.getString(preference.getKey(), "");
+            setPreferenceLabel(preference, value);
         }
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
     }
@@ -65,5 +69,23 @@ public class SettingsFragment extends PreferenceFragmentCompat
     public void onDestroy() {
         super.onDestroy();
         getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object newValue) {
+
+        Toast toast = Toast.makeText(getContext(), "Введите целое число", Toast.LENGTH_LONG);
+
+        if (preference.getKey().equals("interval")) {
+            String defaultIntervalString = (String) newValue;
+
+            try {
+                int defaultInterval = Integer.parseInt(defaultIntervalString);
+            } catch (NumberFormatException e) {
+                toast.show();
+                return false;
+            }
+        }
+        return true;
     }
 }
