@@ -207,6 +207,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void initMediaPlayer(SharedPreferences sharedPreferences) {// инициализация плеера
         String melodyName = sharedPreferences.getString("timer_melody", "bell");
+        assert melodyName != null;
         switch (melodyName) {
             case "bell":
                 createMediaPlayer(bellMelodyPath);
