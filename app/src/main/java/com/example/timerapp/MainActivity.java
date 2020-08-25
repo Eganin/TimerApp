@@ -6,6 +6,8 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
@@ -70,21 +72,8 @@ public class MainActivity extends AppCompatActivity {
             seekBar.setEnabled(false);
             isTimerOn = true;
 
-            // получаем текущее время
-            Integer currentTimeStart = getCurrentTime() * 1000;// получаем текущее время в милисекндах
-            countDownTimer = new CountDownTimer(currentTimeStart, interval) {
-                @Override
-                public void onTick(long l) {
-                    updateTimer();
-                }
+            initTimerMain();
 
-                @Override
-                public void onFinish() {
-                    sound();
-                    resetTimer();
-                }
-            };
-            countDownTimer.start();
         }else{
             countDownTimer.cancel();// останавливаем таймер
             startButton.setText(textStartTimer);
@@ -93,6 +82,24 @@ public class MainActivity extends AppCompatActivity {
             isTimerOn = false;
         }
 
+    }
+
+    private void initTimerMain(){
+        // получаем текущее время
+        Integer currentTimeStart = getCurrentTime() * 1000;// получаем текущее время в милисекндах
+        countDownTimer = new CountDownTimer(currentTimeStart, interval) {
+            @Override
+            public void onTick(long l) {
+                updateTimer();
+            }
+
+            @Override
+            public void onFinish() {
+                sound();
+                resetTimer();
+            }
+        };
+        countDownTimer.start();
     }
 
     private void resetTimer(){
@@ -188,6 +195,17 @@ public class MainActivity extends AppCompatActivity {
 
     public void playSound() {
         mediaPlayer.start();// проигрываем музыку
+    }
+
+    /*
+    переопределяяем метод для создания меню-настроек
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.timer_menu,menu);
+
+        return true;
     }
 
 
