@@ -17,6 +17,8 @@ public class MainActivity extends AppCompatActivity {
     public MediaPlayer mediaPlayer;
     public TextView textView;
     public Button startButton;
+    private boolean isTimerOn;// флаг который показывает работает ли сейчас таймер
+    private CountDownTimer countDownTimer;
     private final static String textStartTimer = "START";
     private final static String textStopTimer = "STOP";
     private final static String textViewEndTimer = "00:00";
@@ -36,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
         seekBar.setMax(maxSecondsTimer);
         seekBar.setProgress(defaultProgress);
+        isTimerOn = false;
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -56,6 +59,65 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void startTimer(View view) {
+        if(!isTimerOn){
+            startButton.setText(textStopTimer);
+            /*
+            С помощью метода .setEnabled(false)
+            Мы запрещаем пользователю воздействоавть
+            на seek bar
+             */
+            seekBar.setEnabled(false);
+            isTimerOn = true;
+
+            // получаем текущее время
+            Integer currentTimeStart = getCurrentTime() * 1000;// получаем текущее время в милисекндах
+            countDownTimer = new CountDownTimer(currentTimeStart, interval) {
+                @Override
+                public void onTick(long l) {
+                    updateTimer();
+                }
+
+                @Override
+                public void onFinish() {
+                    sound();
+                    resetTimer();
+                }
+            };
+            countDownTimer.start();
+        }else{
+            countDownTimer.cancel();// останавливаем таймер
+            startButton.setText(textStartTimer);
+
+            seekBar.setEnabled(true); // делаем seek bar доступным
+            isTimerOn = false;
+        }
+
+    }
+
+    private void resetTimer(){
+        countDownTimer.cancel();// останавливаем таймер
+        startButton.setText(textStartTimer);
+        textView.setText(R.string.timer_default);
+        seekBar.setEnabled(true); // делаем seek bar доступным
+        seekBar.setProgress(defaultProgress);
+        isTimerOn = false;
+    }
+
+    private void updateTimer(){
+        String currentTime = determinantOfTime(getCurrentTime());
+        Log.d("time",currentTime);
+        textView.setText(currentTime);
+        roadSeekBar();// сдвигаем seekBar назад по истечении метода
+    }
+
+    private void sound(){
+        initMediaPlayer();
+        textView.setText(textViewEndTimer);
+        startButton.setText(textStartTimer);
+        playSound();
+    }
+
     private void setTimerSeekBar(int progress) {
         /*
         Данный метод устанавливает время с помощтю ползунка
@@ -70,32 +132,6 @@ public class MainActivity extends AppCompatActivity {
         устанавливаем на seekbar текущее время
          */
         seekBar.setProgress(getCurrentTime() - 1);
-    }
-
-
-    public void startTimer(View view) {
-        // получаем текущее время
-        startButton.setText(textStopTimer);
-        Integer currentTimeStart = getCurrentTime() * 1000;// получаем текущее время в милисекндах
-        CountDownTimer myTimer = new CountDownTimer(currentTimeStart, interval) {
-            @Override
-            public void onTick(long l) {
-                String currentTime = determinantOfTime(getCurrentTime());
-                Log.d("time",currentTime);
-                textView.setText(currentTime);
-                roadSeekBar();// сдвигаем seekBar назад по истечении метода
-            }
-
-            @Override
-            public void onFinish() {
-                initMediaPlayer();
-                textView.setText(textViewEndTimer);
-                startButton.setText(textStartTimer);
-                playSound();
-            }
-        };
-
-        myTimer.start();
     }
 
 
