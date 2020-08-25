@@ -9,4 +9,12 @@
         android:summaryOn="Sound Enabled"
         />
 
+    <ListPreference
+        android:title="Timer melody"
+        android:key ="timer_melody"
+        android:defaultValue="bell"
+        android:entries="@array/pref_timer_melody_labels"
+        android:entryValues="@array/pref_timer_melody_values"
+        />
+
 </PreferenceScreen>

@@ -31,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
     private final static int interval = 1000;
     private final static int maxSecondsTimer = 3599;
     private final static int defaultProgress = 59;
+    private final static int bellMelodyPath = R.raw.bell_sound;
+    private final static int bipMelodyPath = R.raw.bip_sound;
+    private final static int AlarmSirenPath = R.raw.alarm_siren_sound;
     private SeekBar seekBar;
 
     @Override
@@ -105,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
                 // если пользователь в настройках включил звук
                 if (sharedPreferences.getBoolean("enable_sound", true)) {
-                    sound();
+                    sound(sharedPreferences);
                     resetTimer();
                 } else {
                     resetTimer();
@@ -132,8 +135,8 @@ public class MainActivity extends AppCompatActivity {
         roadSeekBar();// сдвигаем seekBar назад по истечении метода
     }
 
-    private void sound() {
-        initMediaPlayer();
+    private void sound(SharedPreferences sharedPreferences) {
+        initMediaPlayer(sharedPreferences);
         textView.setText(textViewEndTimer);
         startButton.setText(textStartTimer);
         playSound();
@@ -202,9 +205,27 @@ public class MainActivity extends AppCompatActivity {
         return settingTime;
     }
 
-    public void initMediaPlayer() {// инициализация плеера
+    public void initMediaPlayer(SharedPreferences sharedPreferences) {// инициализация плеера
+        String melodyName = sharedPreferences.getString("timer_melody", "bell");
+        switch (melodyName) {
+            case "bell":
+                createMediaPlayer(bellMelodyPath);
+                break;
+
+            case "alarm_Siren":
+                createMediaPlayer(AlarmSirenPath);
+                break;
+
+            case "bip":
+                createMediaPlayer(bipMelodyPath);
+                break;
+        }
+
+    }
+
+    private void createMediaPlayer(int melodyPath) {
         mediaPlayer = MediaPlayer.create(getApplicationContext(),
-                R.raw.bell_sound);// указываем .mp3 mediaPlayer
+                melodyPath);// указываем .mp3 mediaPlayer
     }
 
     public void playSound() {
