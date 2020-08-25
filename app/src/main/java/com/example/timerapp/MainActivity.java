@@ -18,7 +18,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     public MediaPlayer mediaPlayer;
     public TextView textView;
@@ -35,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     private final static int bipMelodyPath = R.raw.bip_sound;
     private final static int AlarmSirenPath = R.raw.alarm_siren_sound;
     private SeekBar seekBar;
+    private Integer defaultInterval;
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +47,11 @@ public class MainActivity extends AppCompatActivity {
         textView = findViewById(R.id.textView);
         seekBar = findViewById(R.id.seekBar);
         startButton = findViewById(R.id.startButton);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         seekBar.setMax(maxSecondsTimer);
-        seekBar.setProgress(defaultProgress);
         isTimerOn = false;
+        setIntervalFromSharedPreferences(sharedPreferences);
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -65,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 
     }
 
@@ -121,10 +127,9 @@ public class MainActivity extends AppCompatActivity {
     private void resetTimer() {
         countDownTimer.cancel();// останавливаем таймер
         startButton.setText(textStartTimer);
-        textView.setText(R.string.timer_default);
         seekBar.setEnabled(true); // делаем seek bar доступным
-        seekBar.setProgress(defaultProgress);
         isTimerOn = false;
+        setIntervalFromSharedPreferences(sharedPreferences);
     }
 
     private void updateTimer() {
@@ -269,5 +274,25 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void setIntervalFromSharedPreferences(SharedPreferences sharedPreferences) {
+        String value = sharedPreferences.getString("interval", "59");
+        defaultInterval = Integer.parseInt((String)value);
+        String result = determinantOfTime(defaultInterval);
+        textView.setText(result);
+        seekBar.setProgress(defaultInterval);
+    }
 
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+        if(s.equals("interval")){
+            setIntervalFromSharedPreferences(sharedPreferences);
+        }
+    }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        sharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
+    }
 }
