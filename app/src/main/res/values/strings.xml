@@ -1,5 +1,5 @@
 <resources>
 <string name="app_name">TimerApp</string>
 <string name="text_main_button">START</string>
-<string name="timer_default">00:60</string>
+<string name="timer_default">00:59</string>
 </resources>
