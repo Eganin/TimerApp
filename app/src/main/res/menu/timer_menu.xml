@@ -5,21 +5,24 @@
         android:id="@+id/action_settings"
         android:title="Settings"
         android:orderInCategory="100"
-        app:showAsAction="never"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_settings_white_24dp"
         />
 
     <item
         android:id="@+id/action_about"
         android:title="About"
         android:orderInCategory="110"
-        app:showAsAction="never"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_question_answer_white_24dp"
         />
 
     <item
         android:id="@+id/action_purchase"
         android:title="Purchase"
         android:orderInCategory="55"
-        app:showAsAction="never"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_baseline_monetization_on_24"
         />
 
 </menu>
