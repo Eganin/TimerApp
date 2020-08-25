@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startTimer(View view) {
-        if(!isTimerOn){
+        if (!isTimerOn) {
             startButton.setText(textStopTimer);
             /*
             С помощью метода .setEnabled(false)
@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
 
             initTimerMain();
 
-        }else{
+        } else {
             countDownTimer.cancel();// останавливаем таймер
             startButton.setText(textStartTimer);
 
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void initTimerMain(){
+    private void initTimerMain() {
         // получаем текущее время
         Integer currentTimeStart = getCurrentTime() * 1000;// получаем текущее время в милисекндах
         countDownTimer = new CountDownTimer(currentTimeStart, interval) {
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         countDownTimer.start();
     }
 
-    private void resetTimer(){
+    private void resetTimer() {
         countDownTimer.cancel();// останавливаем таймер
         startButton.setText(textStartTimer);
         textView.setText(R.string.timer_default);
@@ -113,14 +113,14 @@ public class MainActivity extends AppCompatActivity {
         isTimerOn = false;
     }
 
-    private void updateTimer(){
+    private void updateTimer() {
         String currentTime = determinantOfTime(getCurrentTime());
-        Log.d("time",currentTime);
+        Log.d("time", currentTime);
         textView.setText(currentTime);
         roadSeekBar();// сдвигаем seekBar назад по истечении метода
     }
 
-    private void sound(){
+    private void sound() {
         initMediaPlayer();
         textView.setText(textViewEndTimer);
         startButton.setText(textStartTimer);
@@ -162,9 +162,9 @@ public class MainActivity extends AppCompatActivity {
          */
         String settingTime = null;
         if (totalTime <= 60) {
-            if (totalTime < 10){
-                settingTime = "00:" +"0"+ totalTime;
-            }else{
+            if (totalTime < 10) {
+                settingTime = "00:" + "0" + totalTime;
+            } else {
                 settingTime = "00:" + totalTime;
             }
         } else {
@@ -203,9 +203,9 @@ public class MainActivity extends AppCompatActivity {
     переопределяяем метод для создания меню-настроек
      */
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.timer_menu,menu);
+        menuInflater.inflate(R.menu.timer_menu, menu);
 
         return true;
     }
@@ -216,21 +216,21 @@ public class MainActivity extends AppCompatActivity {
      */
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
+    public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if(id == R.id.action_settings){
-            Intent openSettings = new Intent(this , SettingsActivity.class);
+        if (id == R.id.action_settings) {
+            Intent openSettings = new Intent(this, SettingsActivity.class);
             startActivity(openSettings);
             return true;
-        }else if(id == R.id.action_about){
-            Intent openAbout = new Intent(this , AboutActivity.class);
+        } else if (id == R.id.action_about) {
+            Intent openAbout = new Intent(this, AboutActivity.class);
             startActivity(openAbout);
             return true;
-        }else if(id == R.id.action_purchase){
-            Intent openPurchase = new Intent(this , PurshaseActivity.class);
+        } else if (id == R.id.action_purchase) {
+            Intent openPurchase = new Intent(this, PurshaseActivity.class);
             startActivity(openPurchase);
             return true;
-        }else{
+        } else {
             return false;
         }
     }
